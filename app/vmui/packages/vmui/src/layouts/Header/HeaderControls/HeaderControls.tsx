@@ -46,9 +46,11 @@ const HeaderControls: FC<ControlsProps & HeaderProps> = ({
     />
   );
 
+  // 移动端
   if (isMobile) {
     return (
       <>
+        {/* 移动端控制按钮 */}
         <div>
           <Button
             className={classNames({
@@ -59,6 +61,7 @@ const HeaderControls: FC<ControlsProps & HeaderProps> = ({
             ariaLabel={"controls"}
           />
         </div>
+        {/* 移动端控制弹窗 */}
         <Modal
           title={"Controls"}
           onClose={handleCloseList}
@@ -74,6 +77,7 @@ const HeaderControls: FC<ControlsProps & HeaderProps> = ({
     );
   }
 
+  // 非移动端直接返回控制组件
   return controls;
 };
 

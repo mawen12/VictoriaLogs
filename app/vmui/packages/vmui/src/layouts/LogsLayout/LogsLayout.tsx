@@ -51,8 +51,10 @@ const LogsLayout: FC = () => {
     "vm-container_dark": isDarkTheme
   })}
   >
+    {/* 顶部的导航栏 */}
     <Header controlsComponent={ControlsLogsLayout}/>
     
+    {/* 主体内容区域 */}
     <div
       id="vm-body"
       className={classNames({
@@ -64,6 +66,7 @@ const LogsLayout: FC = () => {
       {/* 根据路由配置渲染对应的页面组件，Outlet 是 React Router 提供的占位组件，用于渲染匹配到的子路由组件 */}
       <Outlet/>
     </div>
+    {/* 页脚区域 */}
     {!appModeEnable && <Footer links={footerLinksToLogs}/>}
 
     <WebStorageCheck/>

@@ -29,6 +29,7 @@ const HeaderNav: FC<HeaderNavProps> = ({ color, background, direction }) => {
         [`vm-header-nav_${direction}`]: direction
       })}
     >
+      {/* 遍历展示 menu */}
       {menu.map(m => (
         m.submenu
           ? (

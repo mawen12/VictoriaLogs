@@ -24,15 +24,17 @@ const Header: FC<HeaderProps> = ({ controlsComponent }) => {
   const windowSize = useWindowSize();
   // 当窗口宽度小于 1000px 时显示侧边栏导航，否则显示顶部导航
   const displaySidebar = useMemo(() => window.innerWidth < 1000, [windowSize]);
-
+  // 是否为黑暗模式
   const { isDarkTheme } = useAppState();
   const appModeEnable = getAppModeEnable();
 
+  // 获取主色调
   const primaryColor = useMemo(() => {
     const variable = isDarkTheme ? "color-background-block" : "color-primary";
     return getCssVariable(variable);
   }, [isDarkTheme]);
 
+  // 获取背景和颜色
   const { background, color } = useMemo(() => {
     const { headerStyles: {
       background = appModeEnable ? "#FFF" : primaryColor,
@@ -42,15 +44,20 @@ const Header: FC<HeaderProps> = ({ controlsComponent }) => {
     return { background, color };
   }, [primaryColor]);
 
+  // 导航
   const navigate = useNavigate();
 
+  // 点击 logo 时的行为
   const onClickLogo = (e: MouseEvent) => {
     const { ctrlKey, metaKey } = e;
     const ctrlMetaKey = ctrlKey || metaKey;
     if (ctrlMetaKey) return; // open in new tab
 
+    // 阻止默认行为，避免在某些浏览器中触发页面刷新
     e.preventDefault();
+    // 导航到 home 路由
     navigate({ pathname: router.home });
+    // 强制刷新页面，确保在某些特殊环境下（如嵌入式使用）能够正确重置状态
     window.location.reload();
   };
 
@@ -64,7 +71,9 @@ const Header: FC<HeaderProps> = ({ controlsComponent }) => {
     })}
     style={{ background, color }}
   >
+    {/* 确定 sidebar 的展示方式 */}
     {displaySidebar ? (
+      // 以 sidebar 形式展示
       <SidebarHeader
         background={background}
         color={color}
@@ -72,6 +81,7 @@ const Header: FC<HeaderProps> = ({ controlsComponent }) => {
     ) : (
       <>
         {!appModeEnable && (
+          // logo 区域
           <div
             className="vm-header-logo"
             onClick={onClickLogo}
@@ -80,13 +90,16 @@ const Header: FC<HeaderProps> = ({ controlsComponent }) => {
             {<Logo/>}
           </div>
         )}
+        {/* 导航栏 */}
         <HeaderNav
           color={color}
           background={background}
         />
       </>
     )}
+
     {displaySidebar && (
+      // 展示 logo
       <div
         className={classNames({
           "vm-header-logo": true,
@@ -98,6 +111,8 @@ const Header: FC<HeaderProps> = ({ controlsComponent }) => {
         {<Logo/>}
       </div>
     )}
+
+    {/* Header 控制组件 */}
     <HeaderControls
       controlsComponent={controlsComponent}
       displaySidebar={displaySidebar}
