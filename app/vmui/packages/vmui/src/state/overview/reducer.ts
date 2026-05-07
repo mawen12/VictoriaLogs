@@ -3,13 +3,19 @@ import { LogsFieldValues } from "../../api/types";
 type ParamsKey = string;
 
 export interface OverviewState {
+  // 日志总数
   totalLogs: number;
+  // 日志字段列表，用于查询自动补全
   fieldNames: LogsFieldValues[];
+  // fieldNames 的参数键，用于缓存和查询字符串
   fieldNamesParamsKey: ParamsKey | null;
+  // 流字段列表，用于查询自动补全
   streamsFieldNames: LogsFieldValues[];
+  // streamsFieldNames 的参数键，用于缓存和查询字符串
   streamsFieldNamesParamsKey: ParamsKey | null;
 }
 
+// 更新值的操作以及值类型，对应 OverviewState 中的字段
 export type Action =
   | { type: "SET_TOTAL_LOGS"; payload: number }
   | { type: "SET_FIELD_NAMES"; payload: { key: ParamsKey; rows: LogsFieldValues[] } }

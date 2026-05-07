@@ -26,9 +26,13 @@ var (
 )
 
 func main() {
+	// 解析参数
 	flag.Parse()
+
+	// 记录开始时间
 	startedAt := time.Now().Unix()
 
+	// 读取日志路径
 	logFiles, err := os.ReadDir(*logsPath)
 	if err != nil {
 		panic(fmt.Errorf("error reading directory %s:%w", *logsPath, err))
@@ -36,17 +40,21 @@ func main() {
 
 	sourceFiles := make([]string, 0)
 
+	// 遍历出以 .log 结尾的文件
 	for _, logFile := range logFiles {
 		if strings.HasSuffix(logFile.Name(), ".log") {
 			sourceFiles = append(sourceFiles, logFile.Name())
 		}
 	}
+
 	log.Printf("sourceFiles: %v", sourceFiles)
 	log.Printf("running with rate limit: %d items per %s", *outputRateLimitItems, *outputRateLimitPeriod)
 
 	limitTicker := time.NewTicker(*outputRateLimitPeriod)
 	limitItems := *outputRateLimitItems
 	limiter := make(chan struct{}, limitItems)
+
+	// goroutine，每隔 outputRateLimitPeriod 向每个 outputRateLimitItems 的 limiter channel 投递空结构
 	go func() {
 		for {
 			<-limitTicker.C
@@ -56,13 +64,16 @@ func main() {
 		}
 	}()
 
+	// 
 	for _, sourceFile := range sourceFiles {
 		log.Printf("sourceFile: %s", sourceFile)
+		// 打开 .log 文件
 		f, err := os.Open(*logsPath + "/" + sourceFile)
 		if err != nil {
 			panic(err)
 		}
 
+		// 
 		syslogTag := "logs-benchmark-" + sourceFile + "-" + strconv.FormatInt(startedAt, 10)
 
 		// Loki uses RFC5424 syslog format, which has a 48 character limit on the tag.
@@ -71,10 +82,14 @@ func main() {
 			truncate := tagLen - 48
 			syslogTag = syslogTag[truncate:]
 		}
+
+		// 启动 tcp
 		logger, err := syslog.Dial("tcp", *syslogAddr, syslog.LOG_INFO, syslogTag)
 		if err != nil {
 			panic(fmt.Errorf("error dialing syslog: %w", err))
 		}
+
+		// 启动 tcp
 		logger2, err := syslog.Dial("tcp", *syslogAddr2, syslog.LOG_INFO, syslogTag)
 		if err != nil {
 			panic(fmt.Errorf("error dialing syslog: %w", err))
@@ -82,15 +97,21 @@ func main() {
 
 		scanner := bufio.NewScanner(f)
 		for scanner.Scan() {
+			// 等待通知
 			<-limiter
+			// 读取写入的内容
 			line := scanner.Text()
+			// 完善写入的内容
 			if *randomSuffix {
 				line = line + " " + randomString()
 			}
+			// 写入消息
 			_ = logger.Info(line)
+			// 写入消息
 			_ = logger2.Info(line)
 		}
 
+		// 关闭
 		logger.Close()
 		logger2.Close()
 	}

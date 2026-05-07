@@ -14,14 +14,24 @@ import AllButtonsPreview from "./components/Main/Button/AllButtonsPreview";
 const isDev = import.meta.env.DEV;
 
 const App: FC = () => {
+  // 主题加载完成标志，确保在主题变量设置完成后再渲染页面，避免闪烁
   const [loadedTheme, setLoadedTheme] = useState(false);
 
   return <>
-    <HashRouter>
+    {/* 基于 Hash 的路由 */}
+    <HashRouter> 
+      {/* 应用上下文提供者(AppState、TimeState、QueryState、Snackbar、LogsState、OverviewState) */}
       <AppContextProvider>
         <>
+          {/* 主题提供者，支持主题切换 */}
           <ThemeProvider onLoaded={setLoadedTheme}/>
           {loadedTheme && (
+            // 路由配置，根据路径渲染不同页面
+            // / -> LogsLayout -> QueryPage
+            // /overview -> LogsLayout -> OverviewPage
+            // /stream-context/:_stream_id/:_time -> LogsLayout -> StreamContext 
+            // /icons -> PreviewIcons (仅开发环境)
+            // /buttons -> AllButtonsPreview (仅开发环境)
             <Routes>
               <Route
                 path={"/"}
@@ -40,6 +50,7 @@ const App: FC = () => {
                   element={<StreamContext/>}
                 />
 
+                {/* 仅开发环境 */}
                 {isDev && (
                   <>
                     <Route

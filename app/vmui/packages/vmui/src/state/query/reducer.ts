@@ -14,15 +14,23 @@ export interface QueryHistoryType {
 }
 
 export interface QueryState {
+  // 多个查询语句
   query: string[];
+  // 查询历史记录
   queryHistory: QueryHistoryType[];
+  // 是否启用自动补全
   autocomplete: boolean;
+  // 是否启用快速自动补全模式
   autocompleteQuick: boolean;
+  // 自动补全缓存，存储之前的自动补全结果，避免重复计算
   autocompleteCache: QueryAutocompleteCache;
+  // MetricsQL 函数列表，用于自动补全提示
   metricsQLFunctions: AutocompleteOptions[];
+  // 查询是否包含时间过滤器，用于提示用户可能需要调整时间范围
   queryHasTimeFilter: boolean;
 }
 
+// 更新值的操作以及值类型，对应 QueryState 中的字段
 export type QueryAction =
   | { type: "SET_QUERY", payload: string[] }
   | { type: "SET_QUERY_HISTORY_BY_INDEX", payload: { value: QueryHistoryType, queryNumber: number } }

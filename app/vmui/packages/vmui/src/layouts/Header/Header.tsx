@@ -22,6 +22,7 @@ const Header: FC<HeaderProps> = ({ controlsComponent }) => {
   const { isMobile } = useDeviceDetect();
 
   const windowSize = useWindowSize();
+  // 当窗口宽度小于 1000px 时显示侧边栏导航，否则显示顶部导航
   const displaySidebar = useMemo(() => window.innerWidth < 1000, [windowSize]);
 
   const { isDarkTheme } = useAppState();

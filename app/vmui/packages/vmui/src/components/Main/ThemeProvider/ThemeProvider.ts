@@ -68,11 +68,15 @@ export const ThemeProvider: FC<ThemeProviderProps> = ({ onLoaded }) => {
   };
 
   const setTheme = () => {
+    // 优先级：应用模式 > 用户设置 > 系统设置
     const theme = (getFromStorage("THEME") || Theme.system) as Theme;
+    // 读取主题对应的调色板
     const result = palette[theme];
+    // 将调色板中的颜色变量设置到 CSS 变量中
     Object.entries(result).forEach(([variable, value]) => {
       setCssVariable(variable, value);
     });
+    // 设置对比色文本
     setContrastText();
 
     if (appModeEnable) setAppModePalette();

@@ -5,13 +5,19 @@ import { isDarkTheme } from "../../utils/theme";
 import { removeTrailingSlash } from "../../utils/url";
 
 export interface AppState {
+  // 服务端 URL 
   serverUrl: string;
+  // 主题
   theme: Theme;
+  // 是否为暗色主题
   isDarkTheme: boolean | null;
+  // 标志位
   flags: Record<string, string | null>;
+  // 应用配置
   appConfig: AppConfig
 }
 
+// 更新值的操作以及值类型，对应 AppState 中的字段
 export type Action =
   | { type: "SET_SERVER", payload: string }
   | { type: "SET_THEME", payload: Theme }
@@ -19,6 +25,7 @@ export type Action =
   | { type: "SET_APP_CONFIG", payload: AppConfig }
   | { type: "SET_DARK_THEME" }
 
+// 初始默认值
 export const initialState: AppState = {
   serverUrl: removeTrailingSlash(getDefaultServer()),
   theme: (getFromStorage("THEME") || Theme.system) as Theme,

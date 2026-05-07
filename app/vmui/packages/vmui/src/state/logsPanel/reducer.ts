@@ -3,11 +3,15 @@ import { LogsFieldValues } from "../../api/types";
 import { AUTOCOMPLETE_LIMITS } from "../../constants/queryAutocomplete";
 
 export interface LogsState {
+  // 是否启用 Markdown 解析
   markdownParsing: boolean;
+  // 是否启用 ANSI 解析
   ansiParsing: boolean;
+  // 自动补全缓存，键为查询字段，值为该字段的可能取值列表
   autocompleteCache: Map<string, LogsFieldValues[]>;
 }
 
+// 更新值的操作以及值类型，对应 LogsState 中的字段
 export type LogsAction =
   | { type: "SET_MARKDOWN_PARSING", payload: boolean }
   | { type: "SET_ANSI_PARSING", payload: boolean }

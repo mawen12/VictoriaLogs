@@ -13,13 +13,19 @@ import { getQueryStringValue } from "../../utils/query-string";
 import { getFromStorage, saveToStorage } from "../../utils/storage";
 
 export interface TimeState {
+  // 持续时间
   duration: string;
+  // 时间范围
   period: TimeParams;
+  // 相对时间
   relativeTime?: string;
+  // 时区
   timezone: string;
+  // 默认时区
   defaultTimezone?: string;
 }
 
+// 更新值的操作以及值类型，对应 TimeState 中的字段
 export type TimeAction =
   | { type: "SET_TIME_STATE", payload: { duration: string, period: TimeParams, relativeTime?: string; } }
   | { type: "SET_DURATION", payload: string }
@@ -30,9 +36,11 @@ export type TimeAction =
   | { type: "SET_TIMEZONE", payload: string }
   | { type: "SET_DEFAULT_TIMEZONE", payload: string }
 
+// 从存储中获取默认时区，如果没有则使用浏览器时区
 const timezone = getFromStorage("TIMEZONE") as string || getBrowserTimezone().region;
 setTimezone(timezone);
 
+// 获取初始时间状态，优先使用查询字符串中的值，如果没有则使用默认值
 export const getInitialTimeState = () => {
   const defaultDuration = getQueryStringValue("g0.range_input") as string;
 
