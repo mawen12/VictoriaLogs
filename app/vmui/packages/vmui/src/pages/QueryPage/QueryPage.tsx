@@ -31,52 +31,73 @@ import classNames from "classnames";
 import ExtraFiltersPanel from "../../components/ExtraFilters/ExtraFiltersPanel/ExtraFiltersPanel";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
 
+// 读取存储记录数上限
 const storageLimit = Number(getFromStorage("LOGS_LIMIT"));
+// 修正存储记录数
 const defaultLimit = isNaN(storageLimit) ? LOGS_DEFAULT_LIMIT : storageLimit;
 
 type FetchFlags = { logs: boolean; hits: boolean };
 
 const QueryPage: FC = () => {
+  // 是否为移动端
   const { isMobile } = useDeviceDetect();
+  // 查询历史
   const { queryHistory, queryHasTimeFilter } = useQueryState();
+  // 查询状态修改
   const queryDispatch = useQueryDispatch();
+  // 时间状态
   const { duration, relativeTime, period: periodState } = useTimeState();
+  // 时间状态修改
   const timeDispatch = useTimeDispatch();
+
   const { setSearchParamsFromKeys } = useSearchParamsFromObject();
   const {
     topHits: { value: topHits },
     groupFieldHits: { value: groupFieldHits },
     step: { value: step },
   } = useHitsChartConfig();
+
   const prevTopHits = usePrevious(topHits);
   const prevGroupFieldHits = usePrevious(groupFieldHits);
   const prevStep = usePrevious(step);
 
+  // 提取路由上的查询参数
   const [searchParams] = useSearchParams();
 
+  // 根据 hide_chart 来决定是否隐藏 chart
   const hideChart = useMemo(() => Boolean(searchParams.get("hide_chart")), [searchParams]);
+  // 
   const prevHideChart = usePrevious(hideChart);
 
+  // 根据 hide_logs 来决定是否隐藏 logs
   const hideLogs = useMemo(() => Boolean(searchParams.get("hide_logs")), [searchParams]);
   const prevHideLogs = usePrevious(hideLogs);
 
+  // 读取 query string 中 key=graph_mode 的值，并同步到本地 state
   const [graphQueryMode] = useStateSearchParams(GRAPH_QUERY_MODE.hits, "graph_mode");
   const prevGraphMode = usePrevious(graphQueryMode);
 
+  // 读取 query string 中 key=limit 的值，并同步到本地 state
   const [limit, setLimit] = useStateSearchParams(defaultLimit, LOGS_URL_PARAMS.LIMIT);
+  // 读取 query string 中 key=query 的值，并同步到本地 state
   const [query, setQuery] = useStateSearchParams("*", "query");
   const queryFromParams = searchParams.get("query") || "*";
 
   const [skipNextPeriodEffect, setSkipNextPeriodEffect] = useState(false);
 
+  // 处理返回数量变更的函数
   const handleChangeLimit = (limit: number) => {
+    // 更新到 limit state
     setLimit(limit);
+    // 更新 query string
     setSearchParamsFromKeys({ limit });
+    // 保存到 local storage
     saveToStorage("LOGS_LIMIT", `${limit}`);
   };
 
   const { beforeFetch, modalProps } = useLimitGuard({ setLimit: handleChangeLimit });
 
+  // 更新查询历史的函数
   const updateHistory = () => {
     const history = getUpdatedHistory(query, queryHistory[0]);
     queryDispatch({
@@ -101,12 +122,14 @@ const QueryPage: FC = () => {
   const { isVisible: isVisibleFilterSidebar } = useFilterSidebarVisible();
   const prevIsVisibleFilterSidebar = usePrevious(isVisibleFilterSidebar);
 
+  // 发起异步请求获取数据
   const fetchData = async (period: TimeParams, flags: FetchFlags) => {
     if (isVisibleFilterSidebar) {
       void fetchStreamFieldNames({ ...period, query, extraParams });
     }
 
     if (flags.logs) {
+      // 查询 logs
       const isSuccess = await fetchLogs({
         period,
         extraParams,
@@ -127,6 +150,7 @@ const QueryPage: FC = () => {
     }
   };
 
+  // 
   const debouncedFetchLogs = useDebounceCallback(fetchData, 300);
 
   const getPeriod = () => {

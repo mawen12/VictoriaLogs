@@ -41,6 +41,10 @@ interface TextFieldProps {
   onChangeCaret?: (position: [number, number]) => void
 }
 
+/**
+ * 提供一个统一的文本输入基础组件，同时支持 input 和 textarea 两种形态，
+ * 并扩占了光标追踪、受控 ref、Enter 回调等增强能力
+ */
 const TextField: FC<TextFieldProps> = forwardRef<HTMLInputElement | HTMLTextAreaElement, TextFieldProps>((
   {
     label,
@@ -68,8 +72,11 @@ const TextField: FC<TextFieldProps> = forwardRef<HTMLInputElement | HTMLTextArea
   const { isDarkTheme } = useAppState();
   const { isMobile } = useDeviceDetect();
 
+  // 维护 input 元素引用
   const inputRef = useRef<HTMLInputElement>(null);
+  // 维护 textarea 元素引用
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // 根据 type 选择激活的 href
   const fieldRef = useMemo(() => type === "textarea" ? textareaRef : inputRef, [type]);
 
   const inputClasses = classNames({
@@ -81,6 +88,7 @@ const TextField: FC<TextFieldProps> = forwardRef<HTMLInputElement | HTMLTextArea
     "vm-text-field__input_textarea": type === "textarea",
   });
 
+  // 非受控模式，在 keydown/keyup/mouseup/change 时均更新光标位置
   const updateCaretPosition = (target: HTMLInputElement | HTMLTextAreaElement) => {
     if (!onChangeCaret) return;
     const { selectionStart, selectionEnd } = target;
@@ -95,6 +103,8 @@ const TextField: FC<TextFieldProps> = forwardRef<HTMLInputElement | HTMLTextArea
     onKeyDown && onKeyDown(e);
     const { key, ctrlKey, metaKey } = e;
     const isEnter = key === "Enter";
+    // 普通 input，Enter 直接触发 onEnter；
+    // textarea 需要 Ctrl/Meta + Enter 才触发，其普通 Enter 用于换行
     const runByEnter = type !== "textarea" ? isEnter : isEnter && (metaKey || ctrlKey);
     if (runByEnter && onEnter) {
       e.preventDefault();
@@ -138,11 +148,13 @@ const TextField: FC<TextFieldProps> = forwardRef<HTMLInputElement | HTMLTextArea
     }
   }, []);
 
+  // 同时写入 input 和外部 ref
   const setInputRefs = useCallback((element: HTMLInputElement | null) => {
     setExternalRef(element);
     inputRef.current = element;
   }, []);
 
+  // 同时写入 textarea 和外部 ref
   const setTextareaRefs = useCallback((element: HTMLTextAreaElement | null) => {
     setExternalRef(element);
     textareaRef.current = element;
@@ -154,6 +166,7 @@ const TextField: FC<TextFieldProps> = forwardRef<HTMLInputElement | HTMLTextArea
     fieldRef?.current?.focus && fieldRef.current.focus();
   }, [fieldRef, autofocus]);
 
+  // 受控模式，外部可以直接更新光标位置
   useEffect(() => {
     caretPosition && setSelectionRange(caretPosition);
   }, [caretPosition]);
@@ -209,6 +222,7 @@ const TextField: FC<TextFieldProps> = forwardRef<HTMLInputElement | HTMLTextArea
           />
         )
       }
+      {/* 标签使用 label 包裹整体，点击 label 可聚焦输入框 */}
       {label && <span className="vm-text-field__label">{label}</span>}
       <TextFieldMessage
         error={error}

@@ -13,6 +13,16 @@ type Options = {
   onResizeEnd: (sizePx: number) => void;
 };
 
+/**
+ * 封装拖拽元素尺寸
+ * 
+ * @param targetRef 
+ * @param minSize 最小尺寸
+ * @param axis 横向或纵向拉伸
+ * @param dir 正向/反向拖拽
+ * @param onResizeEnd 拖拽结束时回调
+ * @returns 
+ */
 export function useDragResize({
   targetRef,
   minSize = 80,
@@ -49,12 +59,16 @@ export function useDragResize({
     setDragOffset(0);
     dragOffsetRef.current = 0;
 
+    // 记录起点坐标
     startPosRef.current = getClientPos(mouseDownEvent);
+    // 记录起始尺寸
     startSizeRef.current = getCurrentSize(target);
 
+    // 用于持续计算偏移量，并更新 dragOffset
     const onMouseMove = (mouseMoveEvent: MouseEvent) => {
       const rawOffset = (getClientPos(mouseMoveEvent) - startPosRef.current) * dir;
       const minOffset = minSize - startSizeRef.current;
+      // 下限保护，避免小于最小尺寸
       const nextOffset = Math.max(rawOffset, minOffset);
 
       dragOffsetRef.current = nextOffset;
@@ -63,6 +77,7 @@ export function useDragResize({
 
     const onMouseUp = () => {
       const finalBorderBox = Math.max(minSize, startSizeRef.current + dragOffsetRef.current);
+      // 计算最终尺寸
       const finalSize = borderBoxToContentSize(target, finalBorderBox, axis);
 
       onResizeEnd(finalSize);
@@ -71,9 +86,11 @@ export function useDragResize({
       setDragOffset(0);
       dragOffsetRef.current = 0;
 
+      // 清理事件监听
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
 
+      // 重置状态
       cleanupRef.current = null;
     };
 
@@ -82,6 +99,7 @@ export function useDragResize({
       window.removeEventListener("mouseup", onMouseUp);
     };
 
+    // 绑定 mousemove 
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
   };

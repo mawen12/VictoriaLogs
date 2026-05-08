@@ -13,6 +13,14 @@ interface CheckboxProps {
   onChange?: (value: boolean) => void
 }
 
+/**
+ * 可受控的多态复选框
+ * 
+ * @param color 支持 primary/secondary/gray/inherit 四种
+ * @param size 支持 small/medium/large 三种
+ * @param onChange 回调 
+ * @returns 
+ */
 const Checkbox: FC<CheckboxProps> = ({
   checked = false,
   disabled = false,

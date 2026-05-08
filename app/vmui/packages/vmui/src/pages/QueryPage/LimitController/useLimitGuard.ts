@@ -12,14 +12,18 @@ type Params = {
 };
 
 export const useLimitGuard = ({ setLimit }: Params) => {
+  // 本地 boolean 
   const { value: isOpen, setFalse: handleClose, setTrue: handleOpen } = useBoolean(false);
-
+  // 限制数量
   const [initialLimit, setInitialLimit] = useState<number>(0);
+  // 
   const [limitDraft, setLimitDraft] = useState<number>(0);
 
   // "Don't show this warning again" (session)
+  // 是否展示警告
   const [suppressWarning, setSuppressWarning] = useState<boolean>(() => {
     try {
+      // 从 session 读取 vmui.logs.limit.warn.dismissed
       return Boolean(sessionStorage.getItem(LOGS_LIMIT_WARN_DISMISSED_KEY));
     } catch {
       return false;

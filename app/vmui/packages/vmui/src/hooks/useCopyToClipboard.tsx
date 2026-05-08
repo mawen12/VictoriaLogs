@@ -2,10 +2,16 @@ import { useSnack } from "../contexts/Snackbar";
 
 type CopyFn = (text: string, msgInfo?: string) => Promise<boolean> // Return success
 
+/**
+ * 封装复制文本到剪贴板 + 用户提示反馈
+ * 
+ * @returns 
+ */
 const useCopyToClipboard = (): CopyFn => {
   const { showInfoMessage } = useSnack();
 
   return async (text, msgInfo) => {
+    // 检查浏览器是否剪切板
     if (!navigator?.clipboard) {
       showInfoMessage({ text: <DebugInfoClipboardApi/>, type: "error", timeout: 20000 });
       return false;
@@ -13,15 +19,19 @@ const useCopyToClipboard = (): CopyFn => {
 
     // Try to save to clipboard then save it in the state if worked
     try {
+      // 向剪切板写入文本
       await navigator.clipboard.writeText(text);
+      // 如果开启了消息提示，则展示提示消息
       if (msgInfo) {
         showInfoMessage({ text: msgInfo, type: "success" });
       }
       return true;
     } catch (error) {
+      // 复制出错，弹出提示
       if (error instanceof Error) {
         showInfoMessage({ text: `${error.name}: ${error.message}`, type: "error" });
       }
+      // 在控制台弹出告警
       console.warn("Copy failed", error);
       return false;
     }

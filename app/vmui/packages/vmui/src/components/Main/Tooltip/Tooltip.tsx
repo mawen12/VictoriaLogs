@@ -11,6 +11,12 @@ interface TooltipProps {
   placement?: "bottom-right" | "bottom-left" | "top-left" | "top-right" | "top-center" | "bottom-center"
 }
 
+/**
+ * 在目标元素旁展示悬停提示，支持多个方向、自动防溢出调整、受控/非受控双模式、移动端检测禁用
+ * 
+ * @param open 受控模式，外部接管 
+ * @returns 
+ */
 const Tooltip: FC<TooltipProps> = ({
   children,
   title,
@@ -21,12 +27,15 @@ const Tooltip: FC<TooltipProps> = ({
 }) => {
   const { isMobile } = useDeviceDetect();
 
+  // 维护是否打开的状态
   const [isOpen, setIsOpen] = useState(false);
+  // 维护 tooltip DOM 尺寸，用于位置计算
   const [popperSize, setPopperSize] = useState({ width: 0, height: 0 });
 
   const buttonRef = useRef<ReactNode>(null);
   const popperRef = useRef<HTMLDivElement>(null);
 
+  // 窗口滚动时，自动关闭
   const onScrollWindow = () => setIsOpen(false);
 
   useEffect(() => {
@@ -35,6 +44,7 @@ const Tooltip: FC<TooltipProps> = ({
       width: popperRef.current.clientWidth,
       height: popperRef.current.clientHeight
     });
+    // 监听 scroll 事件
     window.addEventListener("scroll", onScrollWindow);
 
     return () => {
@@ -51,6 +61,7 @@ const Tooltip: FC<TooltipProps> = ({
     const buttonPos = buttonEl.getBoundingClientRect();
     const position = { top: 0, left: 0 };
 
+    // 根据 placement 计算展示位置
     const needAlignRight = placement === "bottom-right" || placement === "top-right";
     const needAlignLeft = placement === "bottom-left" || placement === "top-left";
     const needAlignTop = placement?.includes("top");
@@ -66,29 +77,39 @@ const Tooltip: FC<TooltipProps> = ({
     if (needAlignTop) position.top = buttonPos.top - popperSize.height - offsetTop;
 
     const { innerWidth, innerHeight } = window;
+    // 溢出检测，margin 20px 缓冲
     const margin = 20;
-
+    // 底部溢出检测
     const isOverflowBottom = (position.top + popperSize.height + margin) > innerHeight;
+    // 顶部溢出检测
     const isOverflowTop = (position.top - margin) < 0;
+    // 右侧溢出检测
     const isOverflowRight = (position.left + popperSize.width + margin) > innerWidth;
+    // 左侧溢出检测
     const isOverflowLeft = (position.left - margin) < 0;
 
+    // 底部溢出后，改顶部
     if (isOverflowBottom) position.top = buttonPos.top - popperSize.height - offsetTop;
+    // 顶部溢出后，改底部
     if (isOverflowTop) position.top = buttonPos.height + buttonPos.top + offsetTop;
+    // 右侧溢出后，改左侧
     if (isOverflowRight) position.left = buttonPos.right - popperSize.width - offsetLeft;
+    // 左侧溢出后，改左侧
     if (isOverflowLeft) position.left = buttonPos.left + offsetLeft;
 
+    // 兜底，确保离左上角至少20px
     if (position.top < 0) position.top = 20;
     if (position.left < 0) position.left = 20;
 
     return position;
   }, [buttonRef, placement, isOpen, popperSize]);
 
+  // 非受控模式，鼠标悬浮时自动打开
   const handleMouseEnter = () => {
     if (typeof open === "boolean") return;
     setIsOpen(true);
   };
-
+  // 非受控模式，鼠标悬浮离开时自动关闭
   const handleMouseLeave = () => {
     setIsOpen(false);
   };
@@ -127,6 +148,8 @@ const Tooltip: FC<TooltipProps> = ({
         {children}
       </Fragment>
 
+      {/* !isMobile：移动端禁用 */}
+      {/* createPortal：挂载到 document.body，避免 overflow:hidden 父容器裁切 */}
       {!isMobile && isOpen && !disabled && createPortal((
         <div
           className="vm-tooltip"

@@ -13,6 +13,7 @@ export interface QueryHistoryType {
   values: string[];
 }
 
+// 查询状态
 export interface QueryState {
   // 多个查询语句
   query: string[];

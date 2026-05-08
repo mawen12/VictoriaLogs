@@ -27,7 +27,9 @@ export type Action =
 
 // 初始默认值
 export const initialState: AppState = {
+  // 以当前的页面的 url 作为 server url
   serverUrl: removeTrailingSlash(getDefaultServer()),
+  // 从 local storage 读取 VLUI:THEME 作为初始值
   theme: (getFromStorage("THEME") || Theme.system) as Theme,
   isDarkTheme: null,
   flags: {},
