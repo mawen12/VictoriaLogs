@@ -23,6 +23,12 @@ interface Props {
   setPeriod: ({ from, to }: { from: Date, to: Date }) => void;
 }
 
+/**
+ * 维护图表配置状态，根据配置决定是否显示统计和图表
+ * 
+ * @param param0 
+ * @returns 
+ */
 const BarHitsChart: FC<Props> = ({
   logHits,
   data: _data,
@@ -33,16 +39,24 @@ const BarHitsChart: FC<Props> = ({
   isOverview,
   alertData,
 }) => {
+  // 维护图标选项状态
   const [graphOptions, setGraphOptions] = useState<GraphOptions>({
+    // 图标样式
     graphStyle: GRAPH_STYLES.BAR,
+    // 查询模式
     queryMode: GRAPH_QUERY_MODE.hits,
+    // 是否基于 stacked
     stacked: false,
+    // 是否采用累积
     cumulative: false,
+    // 是否采用填充
     fill: false,
+    // 是否隐藏图表
     hideChart: false,
   });
 
   const isHitsMode = graphOptions.queryMode === GRAPH_QUERY_MODE.hits;
+  // 缓存累积计算的总数，仅当 logHits 变化时才重新计算
   const totalHits = useMemo(() => calculateTotalHits(logHits), [logHits]);
 
   return (

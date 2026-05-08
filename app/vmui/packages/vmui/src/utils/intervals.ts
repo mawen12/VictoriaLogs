@@ -16,20 +16,26 @@ const NICE_INTERVALS_MS = buildNiceIntervalsMs();
  * Returns [] for invalid or zero-length ranges.
  */
 export function generateIntervalsMs(start: number, end: number): number[] {
+  // 转换为毫秒数
   const rangeMs = Math.abs(end - start) * 1000;
+  // 非法值跳过
   if (!Number.isFinite(rangeMs) || rangeMs <= 0) return [];
 
+  // 设置最小可用粒度，如果范围 >= 1分钟，就不允许小于 500ms 的间隔，避免过细粒度导致土图表噪声和性能浪费
   const minNice =
     rangeMs >= SUBSECOND_CUTOFF_RANGE_MS ? MIN_INTERVAL_FOR_LONG_RANGES_MS : 1;
 
   const nice =
     minNice <= 1 ? NICE_INTERVALS_MS : NICE_INTERVALS_MS.filter((v) => v >= minNice);
 
+  // 设定最小可用粒度
   const base = snapToNice(rangeMs / TARGET_BARS, nice);
+  // 选基准间隔
   const picked = SCALE_POWERS.map((p) => snapToNice(base * 2 ** p, nice));
-
+  // 生成一组候选
   const uniqSorted = Array.from(new Set(picked)).sort((a, b) => a - b);
 
+  // 保证数量稳定
   return fillToCount(uniqSorted, nice, 7);
 }
 

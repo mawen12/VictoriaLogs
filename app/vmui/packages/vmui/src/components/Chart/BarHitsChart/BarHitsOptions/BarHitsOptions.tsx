@@ -30,15 +30,20 @@ interface Props {
 }
 
 const BarHitsOptions: FC<Props> = ({ query, isHitsMode, isOverview, onChange }) => {
+  // 获取是否为移动端的 hook
   const { isMobile } = useDeviceDetect();
+
+  // 是否打开列表的 hook
   const {
     value: openList,
     toggle: handleToggleList,
     setFalse: handleCloseList,
   } = useBoolean(false);
 
+  // 获取查询参数的 hook
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // 
   const { topHits, groupFieldHits, step } = useHitsChartConfig();
 
   const { extraParams } = useExtraFilters();
@@ -55,6 +60,7 @@ const BarHitsOptions: FC<Props> = ({ query, isHitsMode, isOverview, onChange }) 
   const [cumulative, setCumulative] = useStateSearchParams(false, "cumulative");
   const [hideChart, setHideChart] = useStateSearchParams(false, "hide_chart");
 
+  // 缓存图表选项
   const options: GraphOptions = useMemo(() => ({
     graphStyle: GRAPH_STYLES.BAR,
     queryMode,
@@ -64,6 +70,7 @@ const BarHitsOptions: FC<Props> = ({ query, isHitsMode, isOverview, onChange }) 
     hideChart,
   }), [stacked, cumulative, hideChart, queryMode]);
 
+  
   const intervals = useMemo(() => {
     const msIntervals = generateIntervalsMs(start, end);
     return msIntervals.map(ms => humanizeSeconds(ms / 1000));

@@ -15,10 +15,11 @@ interface UseBooleanOutput {
  * @returns 
  */
 const useBoolean = (defaultValue?: boolean): UseBooleanOutput => {
-  // 转换为 bool 值存储到本地 state
+  // 维护 boolean 类型的状态
   const [value, setValue] = useState(!!defaultValue);
 
   // 引用稳定
+  // 操作 boolean 值的方法
   const setTrue = useCallback(() => setValue(true), []);
   const setFalse = useCallback(() => setValue(false), []);
   const toggle = useCallback(() => setValue(x => !x), []);

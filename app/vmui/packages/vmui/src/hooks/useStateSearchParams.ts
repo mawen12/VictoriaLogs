@@ -2,7 +2,7 @@ import { Dispatch, useState, useEffect, SetStateAction } from "preact/compat";
 import { useSearchParams } from "react-router-dom";
 
 /**
- * 从 query 参数取值并同步到本地 state
+ * 从 query 参数取值并同步到本地 state，即将 query 中的值置为反应式
  * 
  * @param defaultState 
  * @param key 

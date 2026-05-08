@@ -1,6 +1,6 @@
 <mxfile host="Electron" pages="2">
-  <diagram name="model" id="hSbo-i4g_MFCv3T37QtR">
-    <mxGraphModel dx="1132" dy="614" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+  <diagram name="state" id="hSbo-i4g_MFCv3T37QtR">
+    <mxGraphModel dx="1668" dy="486" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -65,7 +65,7 @@
           <mxGeometry height="26" width="280" y="130" as="geometry" />
         </mxCell>
         <mxCell id="7LUf-qu69GGPqUES1oOv-31" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Snackbar" vertex="1">
-          <mxGeometry height="156" width="280" x="800" y="200" as="geometry" />
+          <mxGeometry height="156" width="280" x="840" y="200" as="geometry" />
         </mxCell>
         <mxCell id="7LUf-qu69GGPqUES1oOv-32" parent="7LUf-qu69GGPqUES1oOv-31" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ text: string | ReactNode" vertex="1">
           <mxGeometry height="26" width="280" y="26" as="geometry" />
@@ -83,7 +83,7 @@
           <mxGeometry height="26" width="280" y="130" as="geometry" />
         </mxCell>
         <mxCell id="7LUf-qu69GGPqUES1oOv-37" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="LogsState" vertex="1">
-          <mxGeometry height="104" width="360" x="1160" y="200" as="geometry" />
+          <mxGeometry height="104" width="360" x="1200" y="200" as="geometry" />
         </mxCell>
         <mxCell id="7LUf-qu69GGPqUES1oOv-38" parent="7LUf-qu69GGPqUES1oOv-37" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ markdownParsing: boolean" vertex="1">
           <mxGeometry height="26" width="360" y="26" as="geometry" />

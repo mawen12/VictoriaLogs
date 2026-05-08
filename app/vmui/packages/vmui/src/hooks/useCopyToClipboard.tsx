@@ -5,7 +5,9 @@ type CopyFn = (text: string, msgInfo?: string) => Promise<boolean> // Return suc
 /**
  * 封装复制文本到剪贴板 + 用户提示反馈
  * 
- * @returns 
+ * @param text 要复制的文本数据
+ * @param msgInfo 复制成功后，展示的消息内容
+ * @return (text, msgInfo) => bool 
  */
 const useCopyToClipboard = (): CopyFn => {
   const { showInfoMessage } = useSnack();

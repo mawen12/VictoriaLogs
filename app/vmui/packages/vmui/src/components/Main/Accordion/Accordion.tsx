@@ -52,6 +52,7 @@ const Accordion: FC<AccordionProps> = ({
     <>
       <header
         // UI 状态与样式联动，提供 open 对应的样式
+        // TODO by mawen vm-accordion-header_open 没有这个属性
         className={`vm-accordion-header ${isOpen && "vm-accordion-header_open"}`}
         onClick={toggleOpen}
       >
