@@ -41,9 +41,17 @@ interface UseGetBarHitsOptionsArgs {
 
 export const OTHER_HITS_LABEL = "other fields";
 
+/**
+ * 从 logHit 提取 label
+ * 
+ * @param logHit 
+ * @returns 
+ */
 export const getLabelFromLogHit = (logHit: LogHits) => {
   if (logHit?._isOther) return OTHER_HITS_LABEL;
+  // 提取字段值
   const fields = Object.values(logHit?.fields || {});
+  // 使用逗号拼接值
   return fields.map((value) => value || "\"\"").join(", ");
 };
 
@@ -73,6 +81,12 @@ const getYRange = (u: uPlot, initMin = 0, initMax = 1) => {
   return getMinMaxBuffer(lo, hi);
 };
 
+/**
+ * 
+ * 
+ * @param param0 
+ * @returns 
+ */
 const useBarHitsOptions = ({
   data,
   logHits,
@@ -100,15 +114,20 @@ const useBarHitsOptions = ({
     requestAnimationFrame(() => u.redraw());
   };
 
+  //
   const series: Series[] = useMemo(() => {
     let visibleColorIndex = 0;
 
     return data.map((_d, i) => {
+      // 第 0 条是 x 轴，直接返回 {}
       if (i === 0) return {}; // x-axis
 
+      // 修改偏移位置，从 1 对其 0，读取命中数量
       const logHit = logHits?.[i - 1];
+      // 从 logHit 提取 label
       const label = getLabelFromLogHit(logHit);
       const isOther = logHit?._isOther;
+      // 决定 series 的颜色
       const colorVar = isOther
         ? "color-log-hits-bar-0"
         : seriesColors[visibleColorIndex];
@@ -118,27 +137,42 @@ const useBarHitsOptions = ({
       if (!isOther) visibleColorIndex += 1;
 
       return {
+        // 序列名称
         label,
+        // 序列宽度
         width: strokeWidth[graphOptions.graphStyle],
+        // 当数据中有 null 时，把前后端连接起来
         spanGaps: true,
+        // 展示该序列
         show: true,
+        // 线条颜色
         stroke: color,
+        // 填充颜色
         fill: graphOptions.fill && !isOther ? `${color}80` : graphOptions.fill ? color : "",
+        // 序列的绘制路径
         paths: barPaths,
+        // 不是点样式
         points: { show: false },
       };
     });
   }, [isDarkTheme, data, graphOptions, logHits, barPaths]);
 
   const options: Options = {
+    // 定义数据序列的显示
     series,
+    // 区域，定义两个 series 之间的填充带
     bands,
+    // 图标尺寸：宽度，默认视口的一半
     width: containerSize.width || (window.innerWidth / 2),
+    // 图标尺寸：高度，默认200高度
     height: containerSize.height || 200,
+    // 鼠标悬停、十字线、联动等交互配置
     cursor: {
       points: { width: 0, size: 0 },
     },
+    // 定义坐标缩放规则
     scales: {
+      // x 轴为时间轴
       x: {
         time: true,
         range: () => [xRange.min, xRange.max]
@@ -147,15 +181,23 @@ const useBarHitsOptions = ({
         range: getYRange
       }
     },
+    // 回调函数
     hooks: {
       drawSeries: [],
+
       draw: [drawHoverBar],
+
       ready: [onReadyChart, barClickHooks.ready],
+
       setCursor: [setCursor],
+
       setSelect: [setSelect(setPlotScale)],
+
       destroy: [handleDestroy, barClickHooks.destroy],
     },
+    // 是否展示 series 的名字和值
     legend: { show: false },
+    // 定义坐标轴怎么显示
     axes: getAxes([{}, { scale: "y" }]),
     tzDate: ts => uPlot.tzDate(new Date(Math.round(ts * 1000)), timezone),
   };

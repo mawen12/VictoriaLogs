@@ -22,10 +22,15 @@ const ControlsLogsLayout: FC<ControlsProps> = ({ isMobile, headerSetup }) => {
       })}
     >
 
+      {/* 租户 */}
       {headerSetup?.tenant && <Tenants/>}
+      {/* 事件选择器 */}
       {headerSetup?.timeSelector && <TimeSelector onOpenSettings={settingsRef?.current?.open}/>}
+      {/* 执行控制器 */}
       {headerSetup?.executionControls &&  <ExecutionControls/>}
+      {/* 全局配置按钮 */}
       <GlobalSettings ref={settingsRef}/>
+      {/* 快捷键 */}
       {!isMobile && (
         <ShortcutKeys>
           <Button

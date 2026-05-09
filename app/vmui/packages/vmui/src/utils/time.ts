@@ -111,6 +111,12 @@ export const formatDateToLocal = (date: string): Date => {
   return dayjs(date).utcOffset(0, true).toDate();
 };
 
+/**
+ * 将 date 转换为 YYYY-MM-DD[T]HH:mm:ss 格式的字符串
+ * 
+ * @param date 
+ * @returns 
+ */
 export const formatDateToUTC = (date: Date): string => {
   return dayjs.tz(date).utc().format(DATE_ISO_FORMAT);
 };
@@ -143,6 +149,12 @@ export const getDurationFromPeriod = (p: TimePeriod): string => {
   return getDurationFromMilliseconds(ms);
 };
 
+/**
+ * 将秒转换为日期
+ *  
+ * @param epochTimeInSeconds 秒数
+ * @returns 
+ */
 export const dateFromSeconds = (epochTimeInSeconds: number): Date => {
   const date = dayjs(epochTimeInSeconds * 1000);
   return date.isValid() ? date.toDate() : new Date();

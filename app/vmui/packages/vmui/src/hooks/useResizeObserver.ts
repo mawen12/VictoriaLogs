@@ -23,6 +23,9 @@ const initialSize: Size = {
 /**
  * 监听 DOM 元素尺寸变化，并将新尺寸暴露给调用方
  * 
+ * 副作用：
+ * - 当盒模型变化/目标 ref 变化/组件进行了挂载或卸载时，计算 ref 的尺寸是否发生变化，并触发回调
+ * 
  * @param ref 目标 DOM 元素
  * @param onResize 回调
  * @param box 盒模型类型
@@ -40,6 +43,7 @@ export function useResizeObserver<T extends HTMLElement = HTMLElement>(
   onResize.current = options.onResize;
 
   useEffect(() => {
+    // 仅当目标 ref 可用时才执行
     if (!ref.current) return;
 
     if (typeof window === "undefined" || !("ResizeObserver" in window)) return;
@@ -66,7 +70,7 @@ export function useResizeObserver<T extends HTMLElement = HTMLElement>(
         if (onResize.current) {
           onResize.current(newSize);
         } else {
-          // 异步回调保护，组件已卸载时不 setState
+          // 异步回调保护，组件已卸载时不 setSize
           if (isMounted()) {
             setSize(newSize);
           }

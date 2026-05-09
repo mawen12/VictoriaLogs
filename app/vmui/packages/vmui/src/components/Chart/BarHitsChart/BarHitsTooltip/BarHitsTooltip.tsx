@@ -29,6 +29,11 @@ type TooltipData = {
 
 const timeFormat = (ts: number) => dayjs(ts * 1000).tz().format(DATE_TIME_FORMAT);
 
+/**
+ * 
+ * @param param0 
+ * @returns 
+ */
 const BarHitsTooltip: FC<Props> = ({ data, focusDataIdx, uPlotInst }) => {
   const [isTooltipReady, setTooltipReady] = useState(false);
 

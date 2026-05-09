@@ -24,7 +24,14 @@ type Props = {
   onOpenSettings?: () => void;
 }
 
+/**
+ * 位于 header 顶部右侧的时间选择组件
+ * 
+ * @param param0 
+ * @returns 
+ */
 export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
+  // hooks
   const { isMobile } = useDeviceDetect();
   const { isDarkTheme } = useAppState();
   const { queryHasTimeFilter } = useQueryState();
@@ -33,12 +40,18 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
   const documentSize = useWindowSize();
   const displayFullDate = useMemo(() => documentSize.width > 1120, [documentSize]);
 
+  // 选择的 util 值
   const [until, setUntil] = useState<string>();
+  // 选择的 from 值
   const [from, setFrom] = useState<string>();
 
+  // 之前的旧值
   const { period: { end, start }, relativeTime, timezone, duration } = useTimeState();
+
   const dispatch = useTimeDispatch();
   const appModeEnable = getAppModeEnable();
+
+  // 获取之前的 timezone
   const prevTimezone = usePrevious(timezone);
 
   const {
@@ -47,11 +60,13 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
     setFalse: handleCloseOptions,
   } = useBoolean(false);
 
+  // 缓存 timezone，用于从其获取时区和区域
   const activeTimezone = useMemo(() => ({
     region: timezone,
     utc: getUTCByTimezone(timezone)
   }), [timezone]);
 
+  // 
   useEffect(() => {
     setUntil(formatDateForNativeInput(dateFromSeconds(end)));
   }, [timezone, end]);
@@ -93,6 +108,7 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
   const onSwitchToNow = () => dispatch({ type: "RUN_QUERY_TO_NOW" });
 
   const onCancelClick = () => {
+    // 将 end
     setUntil(formatDateForNativeInput(dateFromSeconds(end)));
     setFrom(formatDateForNativeInput(dateFromSeconds(start)));
     handleCloseOptions();
@@ -125,7 +141,9 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
 
   return <>
     <div ref={buttonRef}>
+      {/* 区分移动端/网页端 */}
       {isMobile ? (
+        // 移动端展示效果
         <div
           className="vm-mobile-option"
           onClick={toggleOpenOptions}
@@ -138,7 +156,9 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
           <span className="vm-mobile-option__arrow"><ArrowDownIcon/></span>
         </div>
       ) : (
+        // 鼠标悬浮时展示选择的内容
         <Tooltip title={displayFullDate ? "Time range controls" : dateTitle}>
+          {/* 时钟按钮 */}
           <Button
             className={appModeEnable ? "" : "vm-header-button"}
             variant="contained"
@@ -152,12 +172,19 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
         </Tooltip>
       )}
     </div>
+
+    {/* 时间选择器 */}
     <Popper
+      // 是否展示的开关
       open={openOptions}
       buttonRef={buttonRef}
+      // 展示位置
       placement="bottom-right"
+      // 单击关闭的事件
       onClose={handleCloseOptions}
+      // 外部点击是否关闭
       clickOutside={false}
+      // 标题
       title={isMobile ? "Time range controls" : ""}
     >
       <div
@@ -180,6 +207,7 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
           </div>
         )}
 
+        {/* 左侧部分 */}
         <div className="vm-time-selector-left">
           <div
             className={classNames({
@@ -187,6 +215,7 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
               "vm-time-selector-left-inputs_dark": isDarkTheme
             })}
           >
+            {/* From 时间选择器，使用 from */}
             <DateTimeInput
               value={from}
               label="From:"
@@ -195,6 +224,7 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
               onChange={setFrom}
               onEnter={setTimeAndClosePicker}
             />
+            {/* To 时间选择器，使用 util  */}
             <DateTimeInput
               value={until}
               label="To:"
@@ -204,6 +234,8 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
               onEnter={setTimeAndClosePicker}
             />
           </div>
+
+          {/* 时区选择器 */}
           <div
             className="vm-time-selector-left-timezone"
             onClick={handleOpenSettings}
@@ -211,6 +243,8 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
             <div className="vm-time-selector-left-timezone__title">{activeTimezone.region}</div>
             <div className="vm-time-selector-left-timezone__utc">{activeTimezone.utc}</div>
           </div>
+
+          {/* 切换到 now，即将 last minutes 更新到最新时间 */}
           <Button
             variant="text"
             startIcon={<AlarmIcon />}
@@ -218,7 +252,9 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
           >
             Switch to now
           </Button>
+
           <div className="vm-time-selector-left__controls">
+            {/* 取消按钮 */}
             <Button
               color="error"
               variant="outlined"
@@ -226,6 +262,7 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
             >
               Cancel
             </Button>
+            {/* 确定按钮 */}
             <Button
               color="primary"
               onClick={setTimeAndClosePicker}
@@ -234,6 +271,8 @@ export const TimeSelector: FC<Props> = ({ onOpenSettings }) => {
             </Button>
           </div>
         </div>
+
+        {/* 右侧部分 */}
         <TimeDurationSelector
           relativeTime={relativeTime || ""}
           setDuration={setDuration}
