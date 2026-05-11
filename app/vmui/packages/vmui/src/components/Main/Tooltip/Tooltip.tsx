@@ -32,7 +32,9 @@ const Tooltip: FC<TooltipProps> = ({
   // 维护 tooltip DOM 尺寸，用于位置计算
   const [popperSize, setPopperSize] = useState({ width: 0, height: 0 });
 
+  // 用于获取获取触发 tooltip 的子元素的 DOM 节点
   const buttonRef = useRef<ReactNode>(null);
+  // 读取 tooltip 的 div 阶段，用于获取 tooltip 自身的渲染尺寸
   const popperRef = useRef<HTMLDivElement>(null);
 
   // 窗口滚动时，自动关闭

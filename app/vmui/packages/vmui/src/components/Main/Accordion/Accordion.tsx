@@ -27,7 +27,6 @@ const Accordion: FC<AccordionProps> = ({
   // 维护是否展开的状态
   const [isOpen, setIsOpen] = useState(defaultExpanded);
 
-  // 
   const toggleOpen = () => {
     const selection = window.getSelection();
     // 选中文本时，不误触折叠
