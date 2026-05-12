@@ -207,12 +207,14 @@ const BarHitsPlot: FC<Props> = ({ graphOptions, logHits, totalHits, data: _data,
         })}
         ref={containerRef}
       >
+        {/* 展示 uplot 图表 */}
         <div
           className="vm-line-chart__u-plot"
           // uplot 挂载在该元素上
           ref={uPlotRef}
         />
-        {/* 网页端实现 tooltip */}
+
+        {/* tooltip */}
         {!isMobile && (
           <BarHitsTooltip
             uPlotInst={uPlotInst}
@@ -220,9 +222,10 @@ const BarHitsPlot: FC<Props> = ({ graphOptions, logHits, totalHits, data: _data,
             focusDataIdx={focusDataIdx}
           />
         )}
+        
       </div>
 
-      {/* 展示 brand */}
+      {/* 当启用分组时，展示 brand */}
       {uPlotInst && !isSingleOtherSeries && (
         <BarHitsLegend
           uPlotInst={uPlotInst}

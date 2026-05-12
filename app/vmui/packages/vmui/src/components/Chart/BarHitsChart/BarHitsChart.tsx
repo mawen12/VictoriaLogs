@@ -78,12 +78,14 @@ const BarHitsChart: FC<Props> = ({
         />
       </div>
 
+      {/* 警告信息 */}
       {alertData && (
         <div className="vm-query-page-chart__empty">
           <Alert {...alertData}>{alertData.message}</Alert>
         </div>
       )}
 
+      {/* uplot 图表 */}
       {!graphOptions.hideChart && (
         <BarHitsPlot
           logHits={logHits}

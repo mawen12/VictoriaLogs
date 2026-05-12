@@ -134,9 +134,11 @@ const BarHitsOptions: FC<Props> = ({ query, isHitsMode, isOverview, onChange }) 
     return () => clearTimeout(t);
   }, [intervals, defaultStep, step.value]);
 
+  // 控制按钮
   const controls = (
     <>
       <div className="vm-bar-hits-options vm-bar-hits-options_selections">
+        {/* interval 选项 */}
         <div className="vm-bar-hits-options-item">
           <SelectLimit
             label="Interval"
@@ -147,6 +149,8 @@ const BarHitsOptions: FC<Props> = ({ query, isHitsMode, isOverview, onChange }) 
             onChange={step.set}
           />
         </div>
+
+        {/* Group by 选项 */}
         {isHitsMode && (
           <>
             <div className="vm-bar-hits-options-item">
@@ -175,7 +179,7 @@ const BarHitsOptions: FC<Props> = ({ query, isHitsMode, isOverview, onChange }) 
           </div>
         )}
       </div>
-
+      {/* Cumulative 开关 */}  
       <div className="vm-bar-hits-options-item vm-bar-hits-options-item_switch">
         <Switch
           label={"Cumulative"}
@@ -183,6 +187,7 @@ const BarHitsOptions: FC<Props> = ({ query, isHitsMode, isOverview, onChange }) 
           onChange={handleChangeCumulative}
         />
       </div>
+      {/* Stats view 开关 */}
       {!isOverview && (
         <div className="vm-bar-hits-options-item vm-bar-hits-options-item_switch">
           <Switch
@@ -192,6 +197,7 @@ const BarHitsOptions: FC<Props> = ({ query, isHitsMode, isOverview, onChange }) 
           />
         </div>
       )}
+      {/* Stacked 开关 */}
       <div className="vm-bar-hits-options-item vm-bar-hits-options-item_switch">
         <Switch
           label={"Stacked"}
@@ -213,6 +219,7 @@ const BarHitsOptions: FC<Props> = ({ query, isHitsMode, isOverview, onChange }) 
       {!isMobile && !hideChart && (
         <>
           {controls}
+          {/* 快捷键 */}
           <ShortcutKeys withHotkey={false}>
             <Button
               variant="text"
@@ -222,12 +229,14 @@ const BarHitsOptions: FC<Props> = ({ query, isHitsMode, isOverview, onChange }) 
           </ShortcutKeys>
         </>
       )}
+      
       {hideChart && (
         <div className="vm-bar-hits-options__hidden-info">
           Hits chart is hidden. Data updates are paused.
         </div>
       )}
 
+      {/* 隐藏 chart 按钮 */}
       <Tooltip title={hideChart ? "Show chart and resume hits updates" : "Hide chart and pause hits updates"}>
         <Button
           variant="text"
