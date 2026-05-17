@@ -30,6 +30,7 @@ type TooltipData = {
 const timeFormat = (ts: number) => dayjs(ts * 1000).tz().format(DATE_TIME_FORMAT);
 
 /**
+ * 鼠标悬浮展示的图表提示内容
  * 
  * @param param0 
  * @returns 
@@ -44,7 +45,9 @@ const BarHitsTooltip: FC<Props> = ({ data, focusDataIdx, uPlotInst }) => {
       return;
     }
 
+    // data[0] 是 uplot 的 x 轴，代表展示的时间
     const time = data[0][focusDataIdx] || 0;
+    // data[0]
     const step = data[0][1] - data[0][0];
     const timeNext = time + step;
     const values = data.slice(1).map(row => row[focusDataIdx] || 0);
@@ -142,6 +145,7 @@ const BarHitsTooltip: FC<Props> = ({ data, focusDataIdx, uPlotInst }) => {
       style={tooltipPosition}
     >
       <div>
+        {/* 展示提示字段信息，背景色，label 和数据量 */}
         {tooltipData.values.map((item) => (
           <div
             className="vm-chart-tooltip-data"
@@ -159,6 +163,7 @@ const BarHitsTooltip: FC<Props> = ({ data, focusDataIdx, uPlotInst }) => {
         ))}
       </div>
 
+      {/* 多条场景，比如基于某些字段进行分组的情况 */}
       {tooltipData.values.length > 1 && (
         <div className="vm-chart-tooltip-data">
           <span/>
@@ -169,12 +174,14 @@ const BarHitsTooltip: FC<Props> = ({ data, focusDataIdx, uPlotInst }) => {
         </div>
       )}
 
+      {/* 展示该数据的时间范围 */}
       <div className="vm-chart-tooltip-header">
         <div className="vm-chart-tooltip-header__title vm-bar-hits-tooltip__date">
           {tooltipData.timestamp}
         </div>
       </div>
 
+      {/* 最下方的提示 */}
       <div className="vm-bar-hits-tooltip-tips">
         Click a bar to set the time range
       </div>
